@@ -27,7 +27,7 @@ import argparse
 #########GLOBAL VARIABLES###########################
 #########GLOBAL VARIABLES###########################
 parser = argparse.ArgumentParser()
-parser.add_argument('-w2v_model', type=str, help='gensimWord2Vec model file')
+parser.add_argument('-wordvec_file', type=str, help=' word vectors file with word and its corresponding vectors in google word2vec text format')
 parser.add_argument('-cooccur_dict', type=str, help='pickle file containing dict with word pairs tuple as key and their co-occurrence counts as value')
 parser.add_argument('-alpha', type=float, help='the alpha value [0,1]')
 parser.add_argument('-output_fname', type=str, help='name of the output file where clusters will be stored')
@@ -51,6 +51,20 @@ with open(args.cooccur_dict, 'rb') as fid:
     wordDoc = cPickle.load(fid)
         
 def editSim(str1, str2):
+    """
+    Calculates the EditSim(ES).
+
+    Description: The EditSim between two strings str1 and str2, 
+    is an edit distance based similarity measure calculated by
+    1.0 - (ED(str1, str2)/maximum(length(str1), length(str2))).
+    
+    Parameters:
+    str1(str): The first string
+    str2(str): The second string
+
+    Returns:
+    float: the ES value
+    """
     m = len(str1)
     n = len(str2)    
     dp = [[0 for x in range(n+1)] for x in range(2)]
@@ -71,7 +85,18 @@ def editSim(str1, str2):
  
     return 1.0 - (dp[b][n] / float(max(n,m)))
 
+
+
 def lcsSim(word1, word2):
+    """
+    Calculates the BLCSR
+    Parameters:
+    word1(str): The first word
+    word2(str): The seconf word
+
+    Returns:
+    float: the BLCSR value
+    """
     n = len(word1)
     m = len(word2)
     lcs = [[0]*(m+1) for i in xrange(n+1)]
@@ -88,7 +113,11 @@ def lcsSim(word1, word2):
         rt = 0.0
     return rt
 
-def cooccurRatio(w1, w2):
+def cooccurDist(w1, w2):
+    """
+    Calculates the cooccur distance 
+    between 2 words w1 and w2.
+    """
     global wordDoc
     try:
         return wordDoc[(w1, w2)]
@@ -99,7 +128,10 @@ def cooccurRatio(w1, w2):
 
 
 def find_parent(union_dict, word):
-    
+    """ 
+    find root of in union find algorithm
+    with path compression
+    """
     while union_dict[word] != word:
         word = union_dict[word]
     
@@ -107,7 +139,9 @@ def find_parent(union_dict, word):
 
 
 def union(union_dict, word1, word2):
-    
+    """
+    union function in union-find algorithm
+    """
     parent1 = find_parent(union_dict, word1)
     parent2 = find_parent(union_dict, word2)
     if len(parent1) < len(parent2):
@@ -119,22 +153,47 @@ def union(union_dict, word1, word2):
 
 
 
-def find_match(longer_word, shorter_word):  
+def find_match(x, w):
+    """
+    Function to select the candidate morphemes.
+    
+    Description:
+    Function selects candidate morphemes(w) of a particular word(x)which 
+    satisfy two conditions:
+    1. length of the word is >= 2
+    2. BLCSR(x, w) > alpha
+
+    Parameters:
+    x(str): word whose candidate morpheme is required
+    w(str): word which may be candidate morpheme
+
+    Returns:
+    boolean: True if the conditions are satisfied
+    False otherwise
+    """  
     global prefix 
     global alpha     
-    return ((longer_word[:prefix]==shorter_word[:prefix]) and \
-    (len(shorter_word[prefix:]) >= 2 and len(longer_word[prefix:]) >= 2) and \
-(float(lcsSim(shorter_word[prefix:], longer_word[prefix:])))) > (alpha)
-
-''' 
-function to calculate lcs similarity(normalized)
-of Two words 
-'''
+    return ((x[:prefix]==w[:prefix]) and \
+    (len(w[prefix:]) >= 2 and len(x[prefix:]) >= 2) and \
+(float(lcsSim(w[prefix:], x[prefix:])))) > (alpha)
 
 
 
 
-def generate_candidate_stems(qWord):
+
+
+def get_morphemes(qWord):
+    """
+    Finds the morphemes of a particular word.
+
+    Parameters:
+    QWord(str): the query word whose morphemes are needed 
+    to be found
+
+    Returns:
+    A tuple(qWord, cluster) where qWord is the query word
+    and cluster is the cluster of morphemes of qWord.
+    """
     global totWords
     cluster_count = 0
     candidates = [qWord]
@@ -164,10 +223,11 @@ def generate_candidate_stems(qWord):
                 maxClus = words
     
     return (qWord, maxClus)
-''' Function to calculate the gamma value (threshold)
-'''
 
-def find_clus(cluster,beta):    
+def find_clus(cluster,beta):
+    """
+    Breaks the singleton cluster into small clusters.
+    """    
     global model
     G = nx.Graph()
     totClus = {}
@@ -183,7 +243,7 @@ def find_clus(cluster,beta):
             if cr>= beta:
  
                 try:
-                    cr = cr * cooccurRatio(w1,w2)
+                    cr = cr * cooccurDist(w1,w2)
                     if cr > 0:
                         G.add_edge(w1,w2,weight=cr)
                         G.add_edge(w2,w1, weight=cr)
@@ -204,7 +264,13 @@ def find_clus(cluster,beta):
             totClus[v] = [k]
     
     return totClus
+
+
 def find_beta_and_clus(c_list):
+    """
+    calculates beta value and breaks the singleton
+    cluster based on that beta value
+    """
     global model
     n = len(c_list)
     beta_val = 0.0
@@ -249,7 +315,7 @@ if __name__ == '__main__':
     for word in topicWords:
         union_dict[word] = word
     
-    tResClus = p.map(generate_candidate_stems, topicWords)
+    tResClus = p.map(get_morphemes, topicWords)
     p.close()
     p.join()
     for word, clusters in tResClus:   
@@ -267,7 +333,7 @@ if __name__ == '__main__':
             stem_dict[p] = [word]
     for word, clus in stem_dict.iteritems():        
         ResClus.append((word, clus))
-            # print generate_candidate_stems(word)
+            # print get_morphemes(word)
             # topicWords.remove(word)
             # if ResClus[-1][1] is not None:
             #     # print ResClus[-1][1]
