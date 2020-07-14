@@ -1,0 +1,5 @@
+networkx==2.2
+gensim==3.8.1
+python_louvain==0.13
+community==1.0.0b1
+scikit_learn==0.23.1
