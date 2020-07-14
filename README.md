@@ -1,5 +1,16 @@
 # UnsupClean
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/python-2.7-blue.svg)](https://www.python.org/)
 
+
+## Table of Contents
+
+* [Summary](#summary)
+* [Dependencies](#dependencies)
+* [Data for Demo](#data-for-demo)
+* [Run Demo](#run-demo)
+
+### Summary
 Implementation of the proposed algorithm in the paper **An Unsupervised Normalization Algorithm for Noisy Text: A Case Study for Information Retrieval and Stance Detection** by Anurag Roy, Shalmoli Ghosh, Kripabandhu Ghosh, Saptarshi Ghosh
 
 ![UnsupClean](UnsupClean.png "Flow-chart of UnsupClean")
@@ -14,8 +25,9 @@ packages:
 - `community`
 - `scikit_learn`
 
+To install the dependencies run `pip install -r requirements.txt`
 
-### Data for demo
+### Data for Demo
 1. TODO
   
 ### Run Demo
