@@ -7,6 +7,7 @@
 
 * [Summary](#summary)
 * [Dependencies](#dependencies)
+* [Hyperparameters and Options](#hyperparameters-and-options)
 * [Data for Demo](#data-for-demo)
 * [Run Demo](#run-demo)
 
@@ -26,6 +27,16 @@ packages:
 - `scikit_learn`
 
 To install the dependencies run `pip install -r requirements.txt`
+
+### Hyperparameters and Options
+Hyperparameters and options in `main.py`.
+
+- `wordvec_file` Word vectors file containing vector representation for each words in the lexicon in google word2vec text format
+- `cooccur_dict` Pickle file of a python dictionary which has word tuples as its key and their co-occurance counts as its corresponding value
+- `alpha` The alpha value used in the algorithm  \[0, 1\]
+- `output_fname` Name of the output file where the word clusters will be stored
+- `nprocs` Number of parallel processes(the algorithm can be run parallely)
+- `stopword_list` File containing stopwords with one stopword in each line(optional)
 
 ### Data for Demo
 1. TODO
