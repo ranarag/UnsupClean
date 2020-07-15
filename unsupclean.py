@@ -39,7 +39,7 @@ parser.add_argument('--stopword_list', type=str, default='', help='file containi
 
 
 args = parser.parse_args()
-model = KeyedVectors.load_word2vec_format(args.w2v_model, binary=False)
+model = KeyedVectors.load_word2vec_format(args.wordvec_file, binary=False)
 
 prefix = 0
 alpha = args.alpha
