@@ -29,7 +29,7 @@ packages:
 To install the dependencies run `pip install -r requirements.txt`
 
 ### Hyperparameters and Options
-Hyperparameters and options in `main.py`.
+Hyperparameters and options in `unsupclean.py`.
 
 - `wordvec_file` Word vectors file containing vector representation for each words in the lexicon in google word2vec text format
 - `cooccur_dict` Pickle file of a python dictionary which has word tuples as its key and their co-occurance counts as its corresponding value
@@ -39,11 +39,17 @@ Hyperparameters and options in `main.py`.
 - `stopword_list` File containing stopwords with one stopword in each line(optional)
 
 ### Data for Demo
-1. TODO
+For demonstration purposes we have provided the wordvectors and co-occurrence counts of the Sem-Eval Atheism dataset. Stop-word removal is not required for this dataset. Following are the data-files:
+
+1. ![w2v_SemEvalAT_new_100dim_iter100.txt](w2v_SemEvalAT_new_100dim_iter100.txt)
+2. ![cooccurData.pkl](cooccurData.pkl)
   
 ### Run Demo
-`python2 unsupclean.py -w2v_model w2v_risot_iter100.txt -alpha 0.56 -output_fname risot_output_test.txt -nprocs 4 --stopword_list stopwords_list_ben.txt -cooccur_dict cooccurData.pkl`
+To generate the clusters, run the following command:
 
+`python2 unsupclean.py -wordvec_file w2v_SemEvalAT_new_100dim_iter100.txt -alpha 0.56 -output_fname word_clusters.txt -nprocs 4 -cooccur_dict cooccurData.pkl`
+
+The word clusters will be generated in the `word_clusters.txt` file. The format will be `<word><||><space separated list of words in cluster>`. An example entry in the file is `blessed<||>bless blessed`
 
 
 
