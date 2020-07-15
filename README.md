@@ -8,13 +8,17 @@
 * [Summary](#summary)
 * [Dependencies](#dependencies)
 * [Hyperparameters and Options](#hyperparameters-and-options)
+* [About](#about)
 * [Data for Demo](#data-for-demo)
 * [Run Demo](#run-demo)
 
 ### Summary
-Implementation of the proposed algorithm in the paper **An Unsupervised Normalization Algorithm for Noisy Text: A Case Study for Information Retrieval and Stance Detection** by Anurag Roy, Shalmoli Ghosh, Kripabandhu Ghosh, Saptarshi Ghosh
-
+Implementation of the proposed algorithm in the paper **An Unsupervised Normalization Algorithm for Noisy Text: A Case Study for Information Retrieval and Stance Detection** by Anurag Roy, Shalmoli Ghosh, Kripabandhu Ghosh, Saptarshi Ghosh. The proposed unsupervised algorithm finds noisy variants of words in a corpus by finding clusters of its morphological variants. The  flow-chart below gives a schematic overview of the UnsupClean algorithm:
 ![UnsupClean](UnsupClean.png "Flow-chart of UnsupClean")
+
+
+### About
+UnsupClean is a novel Unsupervised and language independent text normalization algorithm. The algorithm relies on lexical and contextual similarities of words/tokens in a corpus to form clusters of their morphological variants. For the contextual similarities the algorithm relies on word vectors and co-occurrence counts. We have used word2vec embeddings for our experiments. However other word vectors can also be used. The implementation expects word vectors and co-occurrence counts in the form of files(more details in [Hyperparameters and Options](#hyperparameters-and-options)). UnsupClean also depends upon `alpha` -- a threshold based on which it determines the lexical similarity. The implementation also has the provision of stopword removal incase anyone wants to exclude stopwords from the clusters. The output will be stored in a file name passed as `output_fname`. The output format is `<word><||><space separated list of words in cluster>`. An example entry in the file is `blessed<||>bless blessed`
 
 ### Dependencies
 python version: `python 2.7`
@@ -49,7 +53,6 @@ To generate the clusters, run the following command:
 
 `python2 unsupclean.py -wordvec_file w2v_SemEvalAT_new_100dim_iter100.txt -alpha 0.56 -output_fname word_clusters.txt -nprocs 4 -cooccur_dict cooccurData.pkl`
 
-The word clusters will be generated in the `word_clusters.txt` file. The format will be `<word><||><space separated list of words in cluster>`. An example entry in the file is `blessed<||>bless blessed`
-
+The word clusters will be generated in the `word_clusters.txt` file. 
 
 
